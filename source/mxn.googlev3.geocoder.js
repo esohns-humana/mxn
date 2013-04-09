@@ -14,14 +14,13 @@ Geocoder: {
 			if (query.hasOwnProperty('lat') && query.hasOwnProperty('lon')) {
 				geocode_request_object.latLng = query.toProprietary(this.api);
 			}
-			// query is an address object
-			else{
+			else {
+			 // query is an address object
 				geocode_request_object.address = [ query.street, query.locality, query.region, query.country ].join(', ');
 			}
 		}
-
-		// query is an address string
 		else {
+			// query is an address string
 			geocode_request_object.address = query;
 		}
 
@@ -33,8 +32,7 @@ Geocoder: {
 	geocode_callback: function(results, status){
 		if (status != google.maps.GeocoderStatus.OK) {
 			this.error_callback(status);
-		} 
-
+		}
 		else {
 			var places = [];
 
@@ -44,45 +42,49 @@ Geocoder: {
 			// lookups; multiple values 'may' be returned but only where there is ambiguity
 			// See https://developers.google.com/maps/documentation/geocoding/#JSON
 			
-			for (i=0; i<results.length; i++) {
-				place = results[i];
-				var streetparts = [];
-				var return_location = {};
+			for (var i = 0; i < results.length; i++) {
+				var place           = results[i],
+				    streetparts     = [],
+				    return_location = {};
 
 				for (var k = 0; k < place.address_components.length; k++) {
 					var addressComponent = place.address_components[k];
 					for (var j = 0; j < addressComponent.types.length; j++) {
 						var componentType = addressComponent.types[j];
 						switch (componentType) {
-							case 'country':
-								return_location.country = addressComponent.long_name;
-								break;
 							case 'administrative_area_level_1':
 								return_location.region = addressComponent.long_name;
+								break;
+						 case 'country':
+								return_location.country = addressComponent.long_name;
 								break;
 							case 'locality':
 								return_location.locality = addressComponent.long_name;
 								break;
-							case 'street_address':
-								return_location.street = addressComponent.long_name;
-								break;
 							case 'postal_code':
 								return_location.postcode = addressComponent.long_name;
+								break;
+							case 'route':
+								streetparts.push(addressComponent.long_name);
+								break;
+							case 'street_address':
+								return_location.street = addressComponent.long_name;
 								break;
 							case 'street_number':
 								streetparts.unshift(addressComponent.long_name);
 								break;
-							case 'route':
-								streetparts.push(addressComponent.long_name);
+							// ----------------------
+							case 'administrative_area_level_3':
+							case 'political':
+							default:
 								break;
 						}
 					}
 				}
 
-				if (return_location.street === '' && streetparts.length > 0) {
+				if ((return_location.street === undefined) && (streetparts.length > 0)) {
 					return_location.street = streetparts.join(' ');
 				}
-
 				return_location.point = new mxn.LatLonPoint(place.geometry.location.lat(), place.geometry.location.lng());
 
 				places.push(return_location);
