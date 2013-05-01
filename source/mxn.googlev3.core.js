@@ -57,11 +57,11 @@ Mapstraction: {
 				myOptions.overviewMapControlOptions = {opened: true};
 			}
 		}
-	
+
 		var map = new google.maps.Map(element, myOptions);
-		
+
 		var fireOnNextIdle = [];
-		
+
 		google.maps.event.addListener(map, 'idle', function() {
 			var fireListCount = fireOnNextIdle.length;
 			if (fireListCount > 0) {
@@ -72,16 +72,16 @@ Mapstraction: {
 				}
 			}
 		});
-		
+
 		// deal with click
-		google.maps.event.addListener(map, 'click', function(location){
-			me.click.fire({'location': 
-				new mxn.LatLonPoint(location.latLng.lat(),location.latLng.lng())
-			});
+		google.maps.event.addListener(map, 'click', function(event) {
+			me.click.fire({'location': new mxn.LatLonPoint(event.latLng.lat(),event.latLng.lng()),
+			               'event'   : event
+																	});
 		});
 
 		// deal with zoom change
-		google.maps.event.addListener(map, 'zoom_changed', function(){
+		google.maps.event.addListener(map, 'zoom_changed', function() {
 			// zoom_changed fires before the zooming has finished so we 
 			// wait for the next idle event before firing our changezoom
 			// so that method calls report the correct values

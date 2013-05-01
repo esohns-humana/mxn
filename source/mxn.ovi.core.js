@@ -24,7 +24,8 @@ Mapstraction: {
 		// Handle click event
 		ovi_map.addListener('click', function(event){
 			coords = ovi_map.pixelToGeo(event.targetX, event.targetY);
-			me.click.fire({'location': new mxn.LatLonPoint(coords.latitude, coords.longitude)});
+			me.click.fire({'location': new mxn.LatLonPoint(coords.latitude, coords.longitude),
+			               'event'   : event});
 		}, false);
 
 		// Handle endPan (via centre change) and zoom events
@@ -402,7 +403,7 @@ Marker: {
 	toProprietary: function() {
 		var properties = {};
 		var self = this;
-		
+
 		if (this.iconAnchor) {
 			properties.anchor = [this.iconAnchor[0], this.iconAnchor[1]];
 		}

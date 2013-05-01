@@ -66,32 +66,33 @@ mxn.register('openlayers', {
 					displayOutsideMaxExtent: true
 				}
 			);
-					
+
 			// deal with click
 			map.events.register('click', map, function(evt){
 				var lonlat = map.getLonLatFromViewPortPx(evt.xy);
 				var point = new mxn.LatLonPoint();
 				point.fromProprietary(api, lonlat);
-				me.click.fire({'location': point });
+				me.click.fire({'location': point,
+                   'event'   : evt});
 			});
 
 			// deal with zoom change
 			map.events.register('zoomend', map, function(evt){
 				me.changeZoom.fire();
 			});
-		
+
 			// deal with map movement
 			map.events.register('moveend', map, function(evt){
 				me.moveendHandler(me);
 				me.endPan.fire();
 			});
-		
+
 			// deal with initial tile loading
 			var loadfire = function(e) {
 				me.load.fire();
 				this.events.unregister('loadend', this, loadfire);
 			};
-		
+
 			for (var layerName in this.layers) {
 				if (this.layers.hasOwnProperty(layerName)) {
 					if (this.layers[layerName].visibility === true) {
