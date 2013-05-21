@@ -538,7 +538,7 @@ Polyline: {
 		else {
 			var polyline_options = {
 				'visibility' : true,
-				'color' : this.color,
+				'color' : (this.color + (this.opacity * 255).toString(16)),
 				'stroke' : 'solid',
 				'width' : this.width
 			};
